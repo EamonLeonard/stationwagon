@@ -1,6 +1,6 @@
 <?php
 
-class Controller_Articles extends \Controller_User {
+class Controller_Articles extends Controller_Common {
 	
 	public function before()
     {
@@ -42,16 +42,26 @@ class Controller_Articles extends \Controller_User {
             
             if ( $add_article->run() == TRUE )
             {
+                if ( isset($_POST['save_draft']) )
+                {
+                    $status = 0;
+                }
+                else
+                {
+                    $status = 1;
+                }
+                
                 $article = new Model_Article(array(
                     'category_id' => $add_article->validated('category_id'),
                     'title' => $add_article->validated('title'),
                     'body' => $add_article->validated('body'),
                     'created_time' => time(),
+                    'published' => $status,
                 ));
 
                 $article->save();
                 
-                Session::set_flash('message', 'Article successfully added.');
+                Session::set_flash('success', 'Article successfully added.');
                 
                 Output::redirect('articles/add');
             }
@@ -84,7 +94,7 @@ class Controller_Articles extends \Controller_User {
                 $article->body = $edit_article->validated('body');
                 $article->save();
 
-                Session::set_flash('message', 'Article successfully updated.');
+                Session::set_flash('success', 'Article successfully updated.');
 
                 Output::redirect('articles/edit/'.$article->id);
             }
@@ -100,16 +110,19 @@ class Controller_Articles extends \Controller_User {
         $this->template->content = View::factory('articles/edit', $data);
     }
     
+    public function action_publish($id)
+    {
+        $article = Model_Article::find($id);
+        $article->published = 1;
+        $article->save();
+
+        Output::redirect('articles');
+    }
     
     public function action_delete($id)
     {
         Model_Article::find($id)->delete();
         
-        Output::redirect('articles/index');
+        Output::redirect('articles');
     }
-	
-	public function action_404()
-	{
-		$this->template->content = 'Not Found';
-	}
 }

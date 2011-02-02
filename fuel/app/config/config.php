@@ -19,7 +19,7 @@ return array(
 	 *
 	 * Set this to false or remove if you using mod_rewrite.
 	 */
-	'index_file'	=> 'index.php',
+	'index_file'	=> false,
 
 	/**
 	 * Your environment.  Can be set to any of the following:
@@ -168,7 +168,7 @@ return array(
 		// This is the default route.  We use a "#" here so that we do not have any
 		// reserved routes.
 		'#'		=> 'users',
-		'404'	=> 'articles/404',
+		'404'	=> 'common/404',
 	),
 );
 

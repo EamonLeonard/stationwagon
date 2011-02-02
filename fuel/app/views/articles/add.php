@@ -1,4 +1,5 @@
 <h2>Add an Article</h2>
+<p>Publish a new article by filling the form below.</p>
 
 <?php echo isset($errors) ? $errors : false; ?>
 <?php echo Form::open('articles/add'); ?>
@@ -24,7 +25,8 @@
 </div>
 
 <div class="input submit">
-    <?php echo Form::submit('add_article', 'Add Article'); ?>
+    <?php echo Form::submit('add_article', 'Publish'); ?>
+    <?php echo Form::submit('save_draft', 'Save Draft'); ?>
 </div>
 
 <?php echo Form::close(); ?>

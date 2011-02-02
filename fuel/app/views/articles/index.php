@@ -1,31 +1,48 @@
 <h2>All Articles</h2>
+<p>Manage all your articles.</p>
+<div class="clear"></div>
 
 <?php if ( $total_articles > 0 ): ?>
 
-<table class="tlist" width="100%">
+<table>
+<thead>
     <tr>
-        <th class="thl">Id</th>
+        <th>Id</th>
         <th>Category</th>
         <th>Title</th>
         <th>Body</th>
+        <th>Status</th>
         <th>Created On</th>
-        <th class="thr">Options</th>
+        <th>Options</th>
     </tr>
+</thead>
+<tbody>
     <?php foreach ($articles as $article): ?>
     <tr>
-        <td class="row1" width="5%"><?php echo $article->id; ?></td>
-        <td class="row1">
-            <?php echo ($article->category_id != 0) ? $article->category->name : 'Uncategorized'; ?>
+        <td width="5%"><?php echo $article->id; ?></td>
+        <td><?php echo ($article->category_id != 0) ? $article->category->name : 'Uncategorized'; ?></td>
+        <td><?php echo $article->title; ?></td>
+        <td><?php echo $article->body; ?></td>
+        <td width="7%">
+            <?php 
+            if ( $article->published == 1 )
+            {
+                echo 'Published';
+            }
+            else
+            {
+                echo Html::anchor('articles/publish/'.$article->id, 'Draft', array('title' => 'Click to Publish'));
+            }
+            ?>
         </td>
-        <td class="row1"><?php echo $article->title; ?></td>
-        <td class="row1"><?php echo $article->body; ?></td>
-        <td class="row1" width="12%"><?php echo Date::Factory($article->created_time)->format("%m/%d/%Y"); ?></td>
-        <td class="row1" width="12%">
+        <td width="11%"><?php echo Date::Factory($article->created_time)->format("%m/%d/%Y"); ?></td>
+        <td width="11%">
             <?php echo Html::anchor('articles/edit/'.$article->id, 'edit'); ?> /
             <?php echo Html::anchor('articles/delete/'.$article->id, 'delete'); ?>
         </td>
     </tr>
     <?php endforeach; ?>
+</tbody>
 </table>
 
 <div style="text-align:center; padding-top: 10px;"><?php echo Pagination::create_links(); ?></div>

@@ -19,7 +19,7 @@ return array(
 		'type'			=> 'mysql',
 		'connection'	=> array(
 			'hostname'   => 'localhost',
-			'database'   => 'stationwagon',
+			'database'   => 'projects',
 			'username'   => 'root',
 			'password'   => '',
 			'persistent' => false,

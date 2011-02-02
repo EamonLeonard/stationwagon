@@ -1,6 +1,6 @@
 <?php
 
-class Controller_Categories extends \Controller_User {
+class Controller_Categories extends Controller_Common {
 	
 	public function before()
     {
@@ -49,7 +49,7 @@ class Controller_Categories extends \Controller_User {
 
                 $category->save();
                 
-                Session::set_flash('message', 'Category successfully added.');
+                Session::set_flash('success', 'Category successfully added.');
                 
                 Output::redirect('categories/add');
             }
@@ -78,7 +78,7 @@ class Controller_Categories extends \Controller_User {
                 $category->description = Input::post('description');
                 $category->save();
             
-                Session::set_flash('message', 'Category successfully updated.');
+                Session::set_flash('success', 'Category successfully updated.');
             
                 Output::redirect('categories/edit/'.$category->id);
             }
@@ -97,6 +97,6 @@ class Controller_Categories extends \Controller_User {
     {
         Model_Category::find($id)->delete();
                 
-        Output::redirect('categories/index');
+        Output::redirect('categories');
     }
 }
