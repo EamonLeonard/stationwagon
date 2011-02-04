@@ -23,6 +23,8 @@ class Model {
 
 	const IS_COUNT = 'IS_COUNT_random_hghj8uyt567uygfvb876trf';
 
+	protected $prefixed_table_name = null;
+
 	/**
 	 * Queries the table for the given primary key value ($id).  $id can also
 	 * contain 2 special values:
@@ -53,7 +55,7 @@ class Model {
 	 * <code>$user = User::find(2, array('include' => array('group')));</code>
 	 *
 	 * @param	int|string	$id			the primary key value
-	 * @param	srray		$options	the find options
+	 * @param	array		$options	the find options
 	 * @return	object		the result
 	 */
 	public static function find($id = 'all', $options = array())
@@ -63,6 +65,36 @@ class Model {
 		unset($instance);
 
 		return $results;
+	}
+
+	/**
+	 * Alias for find('all', ...)
+	 *
+	 * Usage:
+	 *
+	 * <code>$user = User::all(array('include' => array('group')));</code>
+	 *
+	 * @param	array		$options	the find options
+	 * @return	object		the result
+	 */
+	public static function all($options = array())
+	{
+		return static::find('all', $options);
+	}
+
+	/**
+	 * Alias for find('first', ...)
+	 *
+	 * Usage:
+	 *
+	 * <code>$user = User::all(array('include' => array('group')));</code>
+	 *
+	 * @param	array		$options	the find options
+	 * @return	object		the result
+	 */
+	public static function first($options = array())
+	{
+		return static::find('first', $options);
 	}
 
 	/**
@@ -90,13 +122,26 @@ class Model {
 		{
 			return;
 		}
-		$find_type = strncmp($name, 'find_all_by_', 12) === 0 ? 'all' : (strncmp($name, 'find_by_', 8) === 0 ? 'first' : false);
-		if ( ! $find_type && $name != '_init')
+		
+		// Start with count_by? Get counting!
+		if (strpos($name, 'count_by') === 0)
 		{
-			throw new \Exception('Invalid method call.  Method '.$name.' does not exist.', 0);
+			$find_type = 'count';
+			$name = substr($name, 9);
 		}
 
-		$name = $find_type === 'first' ? substr($name, 8) : substr($name, 12);
+		// Otherwise, lets find stuff
+		elseif (strpos($name, 'find_') === 0)
+		{
+			$find_type = strncmp($name, 'find_all_by_', 12) === 0 ? 'all' : (strncmp($name, 'find_by_', 8) === 0 ? 'first' : false);
+			$name = $find_type === 'first' ? substr($name, 8) : substr($name, 12);
+		}
+
+		// God knows, complain
+		else
+		{
+			throw new \Fuel_Exception('Invalid method call.  Method '.$name.' does not exist.', 0);
+		}
 
 		$and_parts = explode('_and_', $name);
 
@@ -147,7 +192,15 @@ class Model {
 			$options['or_where'] = array_merge($or_where, $options['or_where']);
 		}
 
-		return static::find($find_type, $options);
+		if ($find_type == 'count')
+		{
+			return static::count($options);
+		}
+
+		else
+		{
+			return static::find($find_type, $options);
+		}
 	}
 
 	/**
@@ -278,6 +331,8 @@ class Model {
 			$this->table_name = Inflector::tableize($this->class_name);
 		}
 
+		$this->prefixed_table_name = \Database::instance()->table_prefix($this->table_name);
+
 		//don't process associacions when instance was created by static::count() 
 		if ($params === self::IS_COUNT)
 		{
@@ -364,7 +419,7 @@ class Model {
 			}
 		}
 
-		throw new \Exception("attribute called '$name' doesn't exist", Exception::AttributeNotFound);
+		throw new \Fuel_Exception("attribute called '$name' doesn't exist", Exception::AttributeNotFound);
 	}
 
 	/**
@@ -388,7 +443,7 @@ class Model {
 	{
 		if ($this->frozen)
 		{
-			throw new \Exception("Can not update $name as object is frozen.", Exception::ObjectFrozen);
+			throw new \Fuel_Exception("Can not update $name as object is frozen.", Exception::ObjectFrozen);
 		}
 
 		if (preg_match('#(.+?)_ids$#', $name, $matches))
@@ -419,7 +474,7 @@ class Model {
 		}
 		else
 		{
-			throw new \Exception("attribute called '$name' doesn't exist", Exception::AttributeNotFound);
+			throw new \Fuel_Exception("attribute called '$name' doesn't exist", Exception::AttributeNotFound);
 		}
 	}
 
@@ -458,7 +513,7 @@ class Model {
 		}
 		else
 		{
-			throw new \Exception("method or association not found for ($name)", Exception::MethodOrAssocationNotFound);
+			throw new \Fuel_Exception("method or association not found for ($name)", Exception::MethodOrAssocationNotFound);
 		}
 	}
 
@@ -878,7 +933,7 @@ class Model {
 		}
 		if (count($base_objects) == 0 && (is_array($id) || is_numeric($id)))
 		{
-			throw new \Exception("Couldn't find anything.", Exception::RecordNotFound);
+			throw new \Fuel_Exception("Couldn't find anything.", Exception::RecordNotFound);
 		}
 
 		return (is_array($id) || $id == 'all')
@@ -1105,16 +1160,16 @@ class Model {
 	 *
 	 * Usage:
 	 *
-	 * <code>$user = User::find(2, array('include' => array('group')));</code>
+	 * <code>$user = Model_User::count(array('include' => array('group')));</code>
 	 *
 	 * @param	int|string	$id			the primary key value
-	 * @param	srray		$options	the find options
+	 * @param	array		$options	the find options
 	 * @return	int|null 	the row count or null
 	 */
-	public static function count($id = 'all', $options = array())
+	public static function count($options = array())
 	{
 		$instance = new static(self::IS_COUNT);
-		$count = $instance->count_query($id, $options);
+		$count = $instance->count_query($options);
 		unset($instance);
 
 		return $count;
@@ -1128,10 +1183,10 @@ class Model {
 	 * @param	array		$options	the array of options
 	 * @return	int|null 	the row count or null
 	 */
-	protected function count_query($id, $options = array())
+	protected function count_query($options = array())
 	{
 		// Start building the query
-		$query = DB::select(DB::expr('COUNT('.$this->table_name.'.'.$this->primary_key.') AS count_result'));
+		$query = DB::select(DB::expr('COUNT('.$this->prefixed_table_name.'.'.$this->primary_key.') AS count_result'));
 	
 		$query->from($this->table_name);
 
@@ -1139,14 +1194,6 @@ class Model {
 		if (array_key_exists('group', $options))
 		{
 			$query->group_by($options['group']);
-		}
-		if (is_array($id))
-		{
-			$query->where($this->primary_key, 'IN', $id);
-		}
-		elseif ($id != 'all' && $id != 'first')
-		{
-			$query->where($this->table_name.'.'.$this->primary_key, '=', $id);;
 		}
 
 		if (array_key_exists('where', $options) and is_array($options['where']))

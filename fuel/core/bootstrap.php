@@ -37,6 +37,12 @@ import('fuel');
  */
 define('MBSTRING', function_exists('mb_get_info'));
 
+/**
+ * Is mbstring enabled?
+ * Set the encoding to use whatever Fuel is set to use.
+ */
+MBSTRING and mb_internal_encoding(INTERNAL_ENC);
+
 // Is Fuel being requested via an AJAX request?
 define('IS_AJAX', isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest');
 
@@ -95,7 +101,7 @@ Fuel\Core\Autoloader::add_classes(array(
 	'Fuel\\Core\\Email_Sendmail'			=> COREPATH.'classes/email/sendmail.php',
 	'Fuel\\Core\\Email_Smtp'				=> COREPATH.'classes/email/smtp.php',
 
-	'Fuel\\Core\\Exception'					=> COREPATH.'classes/exception.php',
+	'Fuel\\Core\\Fuel_Exception'			=> COREPATH.'classes/fuel/exception.php',
 
 	'Fuel\\Core\\Date'						=> COREPATH.'classes/date.php',
 	'Fuel\\Core\\Debug'						=> COREPATH.'classes/debug.php',

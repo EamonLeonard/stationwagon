@@ -120,8 +120,12 @@ return array(
 		 * );
 		 */
 		'packages'	=> array(
+<<<<<<< HEAD
 			'activerecord',
             'auth',
+=======
+			// 'activerecord',
+>>>>>>> f488a6dcdcb7a7da6527f0e54dee2d666de6790c
 		),
 
 		/**

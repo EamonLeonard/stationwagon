@@ -67,7 +67,7 @@ abstract class Database {
 
 			if ( ! isset($config['type']))
 			{
-				throw new \Exception("Database type not defined in {$name} configuration");
+				throw new \Fuel_Exception("Database type not defined in {$name} configuration");
 			}
 
 			// Set the driver class name
@@ -394,8 +394,13 @@ abstract class Database {
 	 *
 	 * @return  string
 	 */
-	public function table_prefix()
+	public function table_prefix($table = null)
 	{
+		if ($table !== null)
+		{
+			return $this->_config['table_prefix'] .$table;
+		}
+
 		return $this->_config['table_prefix'];
 	}
 
