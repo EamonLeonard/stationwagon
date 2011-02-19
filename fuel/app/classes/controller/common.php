@@ -34,9 +34,58 @@ class Controller_Common extends Controller_Template {
         }
     }
 
+    public function authenticate(Array $methods)
+    {
+        // Public Methods
+        $public = $methods['public'];
+
+        // Get current method
+        $method = Uri::segment(2);
+        isset($method) ? $method = Uri::segment(2) : $method = 'index';
+
+        // Authenticate
+        foreach ( array_keys($methods) as $key )
+        {
+            // Only these methods
+            if ( $key == 'only' )
+            {
+                $methods = $methods['only'];
+
+                if ( !Auth::check() && in_array($method, $methods) && !in_array($method, $public) )
+                {
+                    Output::redirect('/');
+                }
+
+                if ( Auth::check() && !in_array($method, $methods) && !in_array($method, $public) )
+                {
+                    Output::redirect('/');
+                }
+            }
+
+            // All, except these methods
+            elseif ( $key == 'except' )
+            {
+                $methods = $methods['except'];
+
+                if ( !Auth::check() && !in_array($method, $methods) && !in_array($method, $public) )
+                {
+                    Output::redirect('/');
+                }
+
+                if ( Auth::check() && in_array($method, $methods) && !in_array($method, $public) )
+                {
+                    Output::redirect('/');
+                }
+            }
+        }
+    }
+
     public function action_404()
     {
-        $this->template->title = 'Not Found';
-        $this->template->content = View::factory('404');
+        // Set a HTTP 404 output header
+		Output::$status = 404;
+
+        $this->template->title = 'Page Not Found';
+		$this->template->content = View::factory('404');
     }
 }

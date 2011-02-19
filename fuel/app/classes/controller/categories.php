@@ -9,7 +9,7 @@ class Controller_Categories extends Controller_Common {
     
     public function action_index()
     {
-        $total_categories = count(Model_Category::find('all'));
+        $total_categories = Model_Article::count();
         
         Pagination::set_config(array(
             'pagination_url' => 'categories/index',
@@ -36,15 +36,16 @@ class Controller_Categories extends Controller_Common {
         
         if ( Input::method() == 'POST' )
         {
-            $add_category = Validation::factory('add_category');
-            $add_category->add('name', 'Name')->add_rule('required');
+            $val = Validation::factory('add_category');
+            $val->add('name', 'Name')->add_rule('required');
+            $val->add('description', 'Description');
             
-            if ( $add_category->run() == TRUE )
+            if ( $val->run() == TRUE )
             {
                 $category = new Model_Category(array(
-                    'name' => Input::post('name'),
-                    'description' => Input::post('description'),
-                    'created_time' => time(),
+                    'name' => $val->validated('name'),
+                    'description' => $val->validated('description'),
+                    'created_time' => Date::time(),
                 ));
 
                 $category->save();
@@ -55,7 +56,7 @@ class Controller_Categories extends Controller_Common {
             }
             else
             {
-                $data['errors'] = $add_category->show_errors();
+                $data['errors'] = $val->show_errors();
             }
         }
         
@@ -69,13 +70,14 @@ class Controller_Categories extends Controller_Common {
         
         if ( Input::method() == 'POST' )
         {
-            $edit_category = Validation::factory('edit_category');
-            $edit_category->add('name')->add_rule('required');
+            $val = Validation::factory('edit_category');
+            $val->add('name', 'Name')->add_rule('required');
+            $val->add('description', 'Description');
             
-            if ( $edit_category->run() == TRUE )
+            if ( $val->run() == TRUE )
             {
-                $category->name = Input::post('name');
-                $category->description = Input::post('description');
+                $category->name = $val->validated('name');
+                $category->description = $val->validated('description');
                 $category->save();
             
                 Session::set_flash('success', 'Category successfully updated.');
@@ -84,7 +86,7 @@ class Controller_Categories extends Controller_Common {
             }
             else
             {
-                $data['errors'] = $edit_category->show_errors();
+                $data['errors'] = $val->show_errors();
             }
         }
         

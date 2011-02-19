@@ -21,8 +21,8 @@ class Controller_Users extends Controller_Common {
         }
 		
 		$val = Validation::factory('users');
-        $val->add_field('username', 'Your username', 'required|min_length[3]|max_length[20]');
-        $val->add_field('password', 'Your password', 'required|min_length[3]|max_length[20]');
+        $val->add_field('username', 'Username', 'required|min_length[3]|max_length[20]');
+        $val->add_field('password', 'Password', 'required|min_length[3]|max_length[20]');
 		
         if ( $val->run() )
         {
@@ -30,7 +30,6 @@ class Controller_Users extends Controller_Common {
 
             if ( $auth->login($val->validated('username'), $val->validated('password')) )
             {
-                Session::set_flash('notice', 'FLASH: logged in');
                 Output::redirect('users');
             }
             else
@@ -72,9 +71,9 @@ class Controller_Users extends Controller_Common {
         }
 		
         $val = Validation::factory('users2');
-        $val->add_field('username', 'Your username', 'required|min_length[3]|max_length[20]');
-        $val->add_field('password', 'Your password', 'required|min_length[3]|max_length[20]');
-        $val->add_field('email', 'Email', 'required|valid_email');
+        $val->add_field('username', 'Username', 'required|min_length[3]|max_length[20]');
+        $val->add_field('password', 'Password', 'required|min_length[3]|max_length[20]');
+        $val->add_field('email', 'Email Address', 'required|valid_email');
 		
         if ( $val->run() )
         {
@@ -87,7 +86,7 @@ class Controller_Users extends Controller_Common {
             
             if( $create_user )
             {
-                Session::set_flash('notice', 'FLASH: User created.');
+                Session::set_flash('notice', 'Thanks for registering!');
                 Output::redirect('users');
             }
             else

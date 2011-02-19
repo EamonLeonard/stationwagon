@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <title>Stationwagon<?php echo isset($title) ? ' - '.$title : null; ?></title>
 
-        <?php echo Asset::css(array('reset.css', 'style.css')); ?>
+        <?php echo Asset::css(array('reset.css', 'style.css', 'stationwagon.css')); ?>
     </head>
     <body>
         <div class="header">
@@ -50,5 +50,7 @@
             <div class="left">Developed by <a href="http://aplusm.me">Abdelrahman Mahmoud</a>
                 and <a href="http://twitter.com/Alfie_Rivera">Alfredo Rivera</a>.</div>
         </div>
+
+        <?php echo Asset::js(array('jquery-1.4.4.min.js', 'sw-core.js')); ?>
     </body>
 </html>

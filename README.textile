@@ -2,6 +2,8 @@ h1. README
 
 Stationwagon is a Fuel-based blog application. The purpose of this application is to show users who are new to the Fuel framework how things work by providing examples.
 
+Check "Stationwagon on FuelPHP Forums":http://fuelphp.com/forums/topics/view/326 for the latest updates.
+
 h2. Team
 
 # "Abdelrahman Mahmoud":http://aplusm.me/ - Lead Developer
@@ -11,14 +13,15 @@ h2. Installation
 
 # Import the *database.sql* to your database
 # Modify the database information in _/fuel/app/config/db.php_
+# and.. that's it!
 
-h2. Learn?
+h2. Learning
 
-Stationwagon is full of examples and is updated regurarly to keep up with changes from Fuel.
+Stationwagon is full of examples and is updated regularly to keep up with changes from Fuel.
 
 # ActiveRecord - how to add, update, delete or fetch records from your database
 # Pagination - how to setup pagination using real data
 # Auth - Stationwagon relies on the Auth package
 # and some other stuff.
 
-So, go ahead and download Stationwagon! If you would like to contribute, just fork our repo and do a pull request if you have something to add.
+So, go ahead and download Stationwagon! If you would like to contribute, just fork the repo and do a pull request if you have something to add.

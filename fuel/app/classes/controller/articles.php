@@ -9,7 +9,7 @@ class Controller_Articles extends Controller_Common {
 	
     public function action_index()
     {
-        $total_articles = count(Model_Article::find('all'));
+        $total_articles = Model_Article::count();
         
         Pagination::set_config(array(
             'pagination_url' => 'articles/index',
@@ -35,14 +35,14 @@ class Controller_Articles extends Controller_Common {
     {
         if ( Input::method() == 'POST' )
         {
-            $add_article = Validation::factory('add_article');
-            $add_article->add('category_id', 'Category')->add_rule('required');
-            $add_article->add('title', 'Title')->add_rule('required');
-            $add_article->add('body', 'Body')->add_rule('required');
+            $val = Validation::factory('add_article');
+            $val->add('category_id', 'Category')->add_rule('required');
+            $val->add('title', 'Title')->add_rule('required');
+            $val->add('body', 'Body')->add_rule('required');
             
-            if ( $add_article->run() == TRUE )
+            if ( $val->run() == TRUE )
             {
-                if ( isset($_POST['save_draft']) )
+                if ( Input::post('save_draft') )
                 {
                     $status = 0;
                 }
@@ -52,10 +52,10 @@ class Controller_Articles extends Controller_Common {
                 }
                 
                 $article = new Model_Article(array(
-                    'category_id' => $add_article->validated('category_id'),
-                    'title' => $add_article->validated('title'),
-                    'body' => $add_article->validated('body'),
-                    'created_time' => time(),
+                    'category_id' => $val->validated('category_id'),
+                    'title' => $val->validated('title'),
+                    'body' => $val->validated('body'),
+                    'created_time' => Date::time(),
                     'published' => $status,
                 ));
 
@@ -67,7 +67,7 @@ class Controller_Articles extends Controller_Common {
             }
             else
             {
-                $data['errors'] = $add_article->show_errors();
+                $data['errors'] = $val->show_errors();
             }
         }
         
@@ -82,16 +82,16 @@ class Controller_Articles extends Controller_Common {
         
         if ( Input::method() == 'POST' )
         {
-            $edit_article = Validation::factory('edit_article');
-            $edit_article->add('category_id')->add_rule('required');
-            $edit_article->add('title')->add_rule('required');
-            $edit_article->add('body')->add_rule('required');
+            $val = Validation::factory('edit_article');
+            $val->add('category_id')->add_rule('required');
+            $val->add('title')->add_rule('required');
+            $val->add('body')->add_rule('required');
             
-            if ( $edit_article->run() == TRUE )
+            if ( $val->run() == TRUE )
             {
-                $article->category_id = $edit_article->validated('category_id');
-                $article->title = $edit_article->validated('title');
-                $article->body = $edit_article->validated('body');
+                $article->category_id = $val->validated('category_id');
+                $article->title = $val->validated('title');
+                $article->body = $val->validated('body');
                 $article->save();
 
                 Session::set_flash('success', 'Article successfully updated.');
@@ -100,7 +100,7 @@ class Controller_Articles extends Controller_Common {
             }
             else
             {
-                $data['errors'] = $edit_article->show_errors();
+                $data['errors'] = $val->show_errors();
             }
         }
         
