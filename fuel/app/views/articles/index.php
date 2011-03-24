@@ -2,17 +2,17 @@
 <p>Manage all your articles.</p>
 <div class="clear"></div>
 
-<?php if ( $total_articles > 0 ): ?>
-
 <div class="filters">
     <strong>Show:</strong>
-    <a href="#">Published</a>
-    <a href="#">Drafts</a>
+    <a href="javascript:void();" onclick="filterArticles('published');">Published</a>
+	&middot;
+    <a href="javascript:void();" onclick="filterArticles('drafts');">Drafts</a>
 </div>
 
 <div id="loading"></div>
 
 <div id="articles">
+	<?php if ( $total_articles > 0 ): ?>
     <table>
     <thead>
         <tr>
@@ -53,10 +53,16 @@
         <?php endforeach; ?>
     </tbody>
     </table>
+
+	<div class="pagination"><?php echo Pagination::create_links(); ?></div>
+
+	<?php else: ?>
+	<div style="color: red;">
+		<?php if ( !$show ): ?>
+		You did not add any articles. <?php echo Html::anchor('articles/add', 'Add an Article'); ?>.
+		<?php else: ?>
+		You do not have any <?php echo Inflector::singularize($show); ?> articles. <?php echo Html::anchor('articles/add', 'Add an Article'); ?>.
+		<?php endif; ?>
+	</div>
+	<?php endif; ?>
 </div>
-
-<div style="text-align:center; padding-top: 10px;"><?php echo Pagination::create_links(); ?></div>
-
-<?php else: ?>
-<p style="color: red;">You did not add any articles. <?php echo Html::anchor('articles/add', 'Add an Article'); ?>.</p>
-<?php endif; ?>

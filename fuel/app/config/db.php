@@ -19,7 +19,7 @@ return array(
 		'type'			=> 'mysql',
 		'connection'	=> array(
 			'hostname'   => 'localhost',
-			'database'   => 'projects',
+			'database'   => 'stationwagon',
 			'username'   => 'root',
 			'password'   => '',
 			'persistent' => false,
@@ -34,7 +34,7 @@ return array(
 		'type'			=> 'mysql',
 		'connection'	=> array(
 			'hostname'   => 'localhost',
-			'database'   => 'fuel_prod',
+			'database'   => 'stationwagon',
 			'username'   => 'root',
 			'password'   => '',
 			'persistent' => false,
@@ -49,7 +49,7 @@ return array(
 		'type'			=> 'mysql',
 		'connection'	=> array(
 			'hostname'   => 'localhost',
-			'database'   => 'fuel_test',
+			'database'   => 'stationwagon',
 			'username'   => 'root',
 			'password'   => '',
 			'persistent' => false,
@@ -64,7 +64,7 @@ return array(
 		'type'			=> 'mysql',
 		'connection'	=> array(
 			'hostname'   => 'localhost',
-			'database'   => 'fuel_qa',
+			'database'   => 'stationwagon',
 			'username'   => 'root',
 			'password'   => '',
 			'persistent' => false,

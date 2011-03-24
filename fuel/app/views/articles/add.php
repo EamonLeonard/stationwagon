@@ -1,27 +1,27 @@
 <h2>Add an Article</h2>
 <p>Publish a new article by filling the form below.</p>
 
-<?php echo isset($errors) ? $errors : false; ?>
+<?php echo $val->show_errors(); ?>
 <?php echo Form::open('articles/add'); ?>
+
+<?php $select_categories = array(0 => 'Uncategorized'); ?>
+<?php foreach ($categories as $category): ?>
+<?php $select_categories[$category->id] = $category->name; ?>
+<?php endforeach; ?>
 
 <div class="input select">
     <?php echo Form::label('Category', 'category_id'); ?>
-    <select name="category_id">
-        <option value="0" selected>Uncategorized</option>
-        <?php foreach ($categories as $category): ?>
-        <option value="<?php echo $category->id; ?>"><?php echo $category->name; ?></option>
-        <?php endforeach; ?>
-    </select>
+	<?php echo Form::select('category_id', $val->input('category_id'), $select_categories); ?>
 </div>
 
 <div class="input text required">
     <?php echo Form::label('Title', 'title'); ?>
-    <?php echo Form::input('title', NULL, array('size' => '30')); ?>
+    <?php echo Form::input('title', $val->input('title'), array('size' => '30')); ?>
 </div>
 
 <div class="input textarea required">
     <?php echo Form::label('Body', 'body'); ?>
-    <?php echo Form::textarea('body', NULL, array('rows' => 4, 'cols' => 40)); ?>
+    <?php echo Form::textarea('body', $val->input('body'), array('rows' => 4, 'cols' => 40)); ?>
 </div>
 
 <div class="input submit">

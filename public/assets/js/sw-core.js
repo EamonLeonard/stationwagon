@@ -1,7 +1,7 @@
 function filterArticles(show)
 {
 	$('#articles').html('');
-    $('#loading').html('Loading');
+    $('#loading').html('Loading...');
 
 	$('#articles').fadeOut('slow', function()
     {

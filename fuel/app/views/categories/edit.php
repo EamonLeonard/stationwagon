@@ -1,6 +1,6 @@
 <h2>Edit Category - <?php echo $category->name; ?></h2>
 
-<?php echo isset($errors) ? $errors : false; ?>
+<?php echo $val->show_errors(); ?>
 <?php echo Form::open('categories/edit/'.$category->id); ?>
 
 <div class="input text required">
@@ -14,7 +14,7 @@
 </div>
 
 <div class="input submit">
-    <?php echo Form::submit('edit_category', 'Edit Category'); ?>
+    <?php echo Form::submit(array('value' => 'Edit Category')); ?>
 </div>
 
 <?php echo Form::close(); ?>

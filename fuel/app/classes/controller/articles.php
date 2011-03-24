@@ -7,9 +7,18 @@ class Controller_Articles extends Controller_Common {
         parent::before();
     }
 	
-    public function action_index()
+    public function action_index($show = 'published')
     {
-        $total_articles = Model_Article::count();
+		if ( $show === 'published' )
+		{
+			$published = 1;
+		}
+		else
+		{
+			$published = 0;
+		}
+		
+        $total_articles = Model_Article::count_by_published($published);
         
         Pagination::set_config(array(
             'pagination_url' => 'articles/index',
@@ -22,92 +31,84 @@ class Controller_Articles extends Controller_Common {
             'offset' => Pagination::$offset,
             'limit' => Pagination::$per_page,
             'include' => 'category',
+			'where' => array(array('published', '=', $published))
         ));
         
         $this->template->title = 'Articles';
         $this->template->content = View::factory('articles/index', array(
             'total_articles' => $total_articles,
             'articles' => $articles,
+			'show' => $show,
         ));
     }
     
     public function action_add()
     {
-        if ( Input::method() == 'POST' )
+        $val = Validation::factory('add_article');
+        $val->add('category_id', 'Category')->add_rule('required');
+        $val->add('title', 'Title')->add_rule('required');
+        $val->add('body', 'Body')->add_rule('required');
+        
+        if ( $val->run() )
         {
-            $val = Validation::factory('add_article');
-            $val->add('category_id', 'Category')->add_rule('required');
-            $val->add('title', 'Title')->add_rule('required');
-            $val->add('body', 'Body')->add_rule('required');
-            
-            if ( $val->run() == TRUE )
+            if ( Input::post('save_draft') )
             {
-                if ( Input::post('save_draft') )
-                {
-                    $status = 0;
-                }
-                else
-                {
-                    $status = 1;
-                }
-                
-                $article = new Model_Article(array(
-                    'category_id' => $val->validated('category_id'),
-                    'title' => $val->validated('title'),
-                    'body' => $val->validated('body'),
-                    'created_time' => Date::time(),
-                    'published' => $status,
-                ));
-
-                $article->save();
-                
-                Session::set_flash('success', 'Article successfully added.');
-                
-                Output::redirect('articles/add');
+                $status = 0;
             }
             else
             {
-                $data['errors'] = $val->show_errors();
+                $status = 1;
             }
+            
+            $article = new Model_Article(array(
+                'category_id' => $val->validated('category_id'),
+                'title' => $val->validated('title'),
+                'body' => $val->validated('body'),
+                'created_time' => Date::time(),
+                'published' => $status,
+            ));
+
+            $article->save();
+            
+            Session::set_flash('success', 'Article successfully added.');
+            
+            Output::redirect('articles/add');
         }
         
-        $data['categories'] = Model_Category::find('all');
         $this->template->title = 'Add Article';
-        $this->template->content = View::factory('articles/add', $data);
+        $this->template->content = View::factory('articles/add', array(
+        	'categories' => Model_Category::find('all'),
+			'val' => Validation::instance('add_article'),
+        ));
     }
     
     public function action_edit($id)
     {
         $article = Model_Article::find($id);
         
-        if ( Input::method() == 'POST' )
+       	$val = Validation::factory('edit_article');
+        $val->add('category_id')->add_rule('required');
+        $val->add('title')->add_rule('required');
+        $val->add('body')->add_rule('required');
+        
+        if ( $val->run() )
         {
-            $val = Validation::factory('edit_article');
-            $val->add('category_id')->add_rule('required');
-            $val->add('title')->add_rule('required');
-            $val->add('body')->add_rule('required');
-            
-            if ( $val->run() == TRUE )
-            {
-                $article->category_id = $val->validated('category_id');
-                $article->title = $val->validated('title');
-                $article->body = $val->validated('body');
-                $article->save();
+            $article->category_id = $val->validated('category_id');
+            $article->title = $val->validated('title');
+            $article->body = $val->validated('body');
+            $article->save();
 
-                Session::set_flash('success', 'Article successfully updated.');
+            Session::set_flash('success', 'Article successfully updated.');
 
-                Output::redirect('articles/edit/'.$article->id);
-            }
-            else
-            {
-                $data['errors'] = $val->show_errors();
-            }
+            Output::redirect('articles/edit/'.$article->id);
         }
         
-        $data['article'] = $article;
-        $data['categories'] = Model_Category::find('all');
         $this->template->title = 'Edit Article - '.$article->title;
-        $this->template->content = View::factory('articles/edit', $data);
+        $this->template->content = View::factory('articles/edit', array(
+			'categories' => Model_Category::find('all'),
+			'article' => $article,
+			'val' => Validation::instance('edit_article'),
+        ));
     }
     
     public function action_publish($id)

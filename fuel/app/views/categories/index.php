@@ -30,7 +30,7 @@
 </tbody>
 </table>
 
-<div style="text-align:center; padding-top: 10px;"><?php echo Pagination::create_links(); ?></div>
+<div class="pagination"><?php echo Pagination::create_links(); ?></div>
 
 <?php else: ?>
 <div class="result" id="notice">

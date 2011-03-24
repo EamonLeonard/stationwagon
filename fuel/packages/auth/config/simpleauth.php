@@ -18,9 +18,5 @@ return array(
 		'super' => true,
 	),
 
-<<<<<<< HEAD
     'table_name' => 'users',
-=======
-    'table_name' => 'simpleusers',
->>>>>>> d80c1e083af0c37206dc947ddc8d689c0707dcf6
 );
