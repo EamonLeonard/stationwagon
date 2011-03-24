@@ -4,17 +4,15 @@
  *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
- * @package		Fuel
- * @version		1.0
- * @author		Fuel Development Team
- * @license		MIT License
- * @copyright	2010 - 2011 Fuel Development Team
- * @link		http://fuelphp.com
+ * @package    Fuel
+ * @version    1.0
+ * @author     Fuel Development Team
+ * @license    MIT License
+ * @copyright  2010 - 2011 Fuel Development Team
+ * @link       http://fuelphp.com
  */
 
 namespace Fuel\Core;
-
-
 
 class Config {
 
@@ -75,7 +73,6 @@ class Config {
 			}
 			$config = static::$items[$config];
 		}
-
 		$content = <<<CONF
 <?php
 /**
@@ -99,10 +96,10 @@ CONF;
 
 /* End of file $file.php */
 CONF;
-		
-		($path = \Fuel::find_file('config', $file, '.php')) or $path = APPPATH.'config'.DS.$file.'.php';
 
-		$path = pathinfo($path);
+		($path = \Fuel::find_file('config', $file, '.php')) or $path[0] = APPPATH.'config'.DS.$file.'.php';
+
+		$path = pathinfo($path[0]);
 
 		return File::update($path['dirname'], $path['basename'], $content);
 	}

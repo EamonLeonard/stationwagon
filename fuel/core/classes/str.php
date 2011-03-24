@@ -4,12 +4,12 @@
  *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
- * @package		Fuel
- * @version		1.0
- * @author		Fuel Development Team
- * @license		MIT License
- * @copyright	2010 - 2011 Fuel Development Team
- * @link		http://fuelphp.com
+ * @package    Fuel
+ * @version    1.0
+ * @author     Fuel Development Team
+ * @license    MIT License
+ * @copyright  2010 - 2011 Fuel Development Team
+ * @link       http://fuelphp.com
  */
 
 namespace Fuel\Core;
@@ -23,16 +23,29 @@ namespace Fuel\Core;
 class Str {
 
 	/**
+	 * Add's _1 to a string or increment the ending number to allow _2, _3, etc
+	 *
+	 * @param string $str required
+	 * @return string
+	 */
+	public static function increment($str, $first = 1)
+	{
+		preg_match('/(.+)_([0-9]+)$/', $str, $match);
+
+		return isset($match[2]) ? $match[1].'_'.($match[2] + 1) : $str.'_'.$first;
+	}
+
+	/**
 	 * lower
-	 * 
+	 *
 	 * @param string $str required
 	 * @param string $encoding default UTF-8
-	 * @return string 
+	 * @return string
 	 */
 	public static function lower($str, $encoding = null)
 	{
-		$encoding or $encoding = INTERNAL_ENC;
-		
+		$encoding or $encoding = \Fuel::$encoding;
+
 		return function_exists('mb_strtolower')
 			? mb_strtolower($str, $encoding)
 			: strtolower($str);
@@ -47,7 +60,7 @@ class Str {
 	 */
 	public static function upper($str, $encoding = null)
 	{
-		$encoding or $encoding = INTERNAL_ENC;
+		$encoding or $encoding = \Fuel::$encoding;
 
 		return function_exists('mb_strtoupper')
 			? mb_strtoupper($str, $encoding)
@@ -65,7 +78,7 @@ class Str {
 	 */
 	public static function lcfirst($str, $encoding = null)
 	{
-		$encoding or $encoding = INTERNAL_ENC;
+		$encoding or $encoding = \Fuel::$encoding;
 
 		return function_exists('mb_strtolower')
 			? mb_strtolower(mb_substr($str, 0, 1, $encoding), $encoding).
@@ -84,7 +97,7 @@ class Str {
 	 */
 	public static function ucfirst($str, $encoding = null)
 	{
-		$encoding or $encoding = INTERNAL_ENC;
+		$encoding or $encoding = \Fuel::$encoding;
 
 		return function_exists('mb_strtoupper')
 			? mb_strtoupper(mb_substr($str, 0, 1, $encoding), $encoding).
@@ -106,7 +119,7 @@ class Str {
 	 */
 	public static function ucwords($str, $encoding = null)
 	{
-		$encoding or $encoding = INTERNAL_ENC;
+		$encoding or $encoding = \Fuel::$encoding;
 
 		return function_exists('mb_convert_case')
 			? mb_convert_case($str, MB_CASE_TITLE, $encoding)

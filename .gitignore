@@ -9,5 +9,4 @@ desktop.ini
 fuel/app/logs/*/*/*
 fuel/app/cache/*/*
 nbproject/
-
-/stationwagon.komodoproject
+.idea

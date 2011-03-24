@@ -4,12 +4,12 @@
  *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
- * @package		Fuel
- * @version		1.0
- * @author		Fuel Development Team
- * @license		MIT License
- * @copyright	2010 - 2011 Fuel Development Team
- * @link		http://fuelphp.com
+ * @package    Fuel
+ * @version    1.0
+ * @author     Fuel Development Team
+ * @license    MIT License
+ * @copyright  2010 - 2011 Fuel Development Team
+ * @link       http://fuelphp.com
  */
 
 namespace Fuel\Core;
@@ -207,7 +207,7 @@ class Validation {
 	 */
 	public function run($input = null, $allow_partial = false)
 	{
-		if (empty($input) && empty($_POST))
+		if (empty($input) && \Input::method() != 'POST')
 		{
 			return false;
 		}
@@ -228,8 +228,7 @@ class Validation {
 				foreach ($field->rules as $rule)
 				{
 					$callback	= $rule[0];
-					$params		= empty($rule[1]) ? array(null) : $rule[1];
-
+					$params		= $rule[1];
 					$this->_run_rule($callback, $value, $params, $field);
 				}
 				$this->validated[$field->name] = $value;
@@ -256,7 +255,7 @@ class Validation {
 	 */
 	protected function _run_rule($rule, &$value, $params, $field)
 	{
-		$output = call_user_func_array($rule, array_merge(array($value), $params, array($this)));
+		$output = call_user_func_array($rule, array_merge(array($value), $params));
 
 		if ($output === false && $value !== false)
 		{

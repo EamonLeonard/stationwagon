@@ -4,12 +4,12 @@
  *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
- * @package		Fuel
- * @version		1.0
- * @author		Fuel Development Team
- * @license		MIT License
- * @copyright	2010 - 2011 Fuel Development Team
- * @link		http://fuelphp.com
+ * @package    Fuel
+ * @version    1.0
+ * @author     Fuel Development Team
+ * @license    MIT License
+ * @copyright  2010 - 2011 Fuel Development Team
+ * @link       http://fuelphp.com
  */
 
 namespace Oil;
@@ -22,14 +22,29 @@ namespace Oil;
  * @category	Core
  * @author		Phil Sturgeon
  */
-class Cli
+class Command
 {
 	public static function init($args)
 	{
+		// Remove flag options from the main argument list
+		for ($i =0; $i < count($args); $i++)
+		{
+			if (strpos($args[$i], '-') === 0)
+			{
+				unset($args[$i]);
+			}
+		}
+
 		try
 		{
 			if ( ! isset($args[1]))
 			{
+				if (\Cli::option('v', \Cli::option('version')))
+				{
+					\Cli::write('Fuel: ' . \Fuel::VERSION);
+					return;
+				}
+
 				static::help();
 				return;
 			}
@@ -73,8 +88,16 @@ class Cli
 
 				case 'r':
 				case 'refine':
-					$task = isset($args[2]) ? $args[2] : null;
 
+					// Developers of third-party tasks may not be displaying PHP errors. Report any error and quit
+					set_error_handler(function($errno, $errstr, $errfile, $errline){
+						\Cli::error("Error: {$errstr} in $errfile on $errline");
+						\Cli::beep();
+						exit;
+					});
+
+					$task = isset($args[2]) ? $args[2] : null;
+					
 					call_user_func('Oil\Refine::run', $task, array_slice($args, 3));
 				break;
 
@@ -98,35 +121,32 @@ class Cli
 
 				case 't':
 				case 'test':
-					\Fuel::add_package('octane');
-					
-					$action = isset($args[2]) ? $args[2]: '--help';
-					
-					switch ($action)
+
+					// Attempt to load PUPUnit.  If it fails, we are done.
+					if ( true)
 					{
-						case '--help':
-							\Fuel\Octane\Tests::help();
-						break;
-						
-						default:
-							call_user_func('\\Fuel\\Octane\\Tests::run_'.$action, array_slice($args, 3));
+						throw new Exception('PHPUnit does not appear to be installed.'.PHP_EOL.PHP_EOL."\tPlease visit http://phpunit.de and install.");
 					}
 
+					// CD to the root of Fuel and call up phpunit with a path to our config
+					$command = 'cd '.DOCROOT.'; phpunit -c "'.COREPATH.'phpunit.xml"';
+
+					// Respect the group option
+					\Cli::option('group') and $command .= ' --group '.\Cli::option('group');
+
+					passthru($command);
+				
 				break;
  
-				case '-v':
-				case '--version':
-					\Cli::write('Fuel: ' . \Fuel::VERSION);
-				break;
-
 				default:
+
 					static::help();
 			}
 		}
 
 		catch (Exception $e)
 		{
-			\Cli::write(\Cli::color('Error: ' . $e->getMessage(), 'light_red'));
+			\Cli::error('Error: '.$e->getMessage());
 			\Cli::beep();
 		}
 	}
@@ -143,11 +163,8 @@ Runtime options:
   -s, [--skip]     # Skip files that already exist
   -q, [--quiet]    # Supress status output
 
-Fuel options:
-  -v, [--version]  # Show Fuel version number and quit
-
 Description:
-  The 'oil' command can be used in serveral ways to facilitate quick development, help with
+  The 'oil' command can be used in several ways to facilitate quick development, help with
   testing your application and for running Tasks.
 
 Documentation:
