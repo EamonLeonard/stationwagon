@@ -81,11 +81,12 @@ class Controller_Common extends Controller_Template {
     }
 
     public function action_404()
-    {
-        // Set a HTTP 404 output header
-		Output::$status = 404;
+	{
+		$messages = array('Aw, crap!', 'Bloody Hell!', 'Uh Oh!', 'Nope, not here.', 'Huh?');
+		$data['title'] = $messages[array_rand($messages)];
 
-        $this->template->title = 'Page Not Found';
-		$this->template->content = View::factory('404');
-    }
+		// Set a HTTP 404 output header
+		Output::$status = 404;
+		$this->render('welcome/404', $data);
+	}
 }
