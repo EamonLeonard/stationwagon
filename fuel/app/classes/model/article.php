@@ -1,6 +1,6 @@
 <?php
 
-class Model_Article extends ActiveRecord\Model {
+class Model_Article extends Orm\Model {
     
-    protected $belongs_to = array('category');
+    protected static $_belongs_to = array('category');
 }

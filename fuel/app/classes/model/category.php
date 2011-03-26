@@ -1,6 +1,6 @@
 <?php
 
-class Model_Category extends ActiveRecord\Model {
+class Model_Category extends Orm\Model {
  
-    protected $has_many = array('articles');
+    protected static $_has_many = array('articles');
 }

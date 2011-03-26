@@ -60,14 +60,12 @@ class Controller_Articles extends Controller_Common {
                 $status = 1;
             }
             
-            $article = new Model_Article(array(
-                'category_id' => $val->validated('category_id'),
-                'title' => $val->validated('title'),
-                'body' => $val->validated('body'),
-                'created_time' => Date::time(),
-                'published' => $status,
-            ));
-
+            $article = new Model_Article();
+			$article->category_id = $val->validated('category_id');
+            $article->title = $val->validated('title');
+            $article->body = $val->validated('body');
+			$article->created_time = time();
+            $article->published = $status;
             $article->save();
             
             Session::set_flash('success', 'Article successfully added.');

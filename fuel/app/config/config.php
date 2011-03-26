@@ -126,8 +126,8 @@ return array(
 		 * );
 		 */
 		'packages'	=> array(
-			'activerecord',
             'auth',
+			'orm',
 		),
 
 		/**
