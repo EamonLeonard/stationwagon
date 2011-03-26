@@ -21,12 +21,13 @@ class Controller_Articles extends Controller_Common {
         $total_articles = Model_Article::count_by_published($published);
         
         Pagination::set_config(array(
-            'pagination_url' => 'articles/index',
+            'pagination_url' => 'articles/index/'.$show.'/',
             'per_page' => 5,
             'total_items' => $total_articles,
             'num_links' => 3,
+			'uri_segment' => 4,
         ));
-        
+		
         $articles = Model_Article::find('all', array(
             'offset' => Pagination::$offset,
             'limit' => Pagination::$per_page,
@@ -60,17 +61,19 @@ class Controller_Articles extends Controller_Common {
                 $status = 1;
             }
             
-            $article = new Model_Article();
-			$article->category_id = $val->validated('category_id');
-            $article->title = $val->validated('title');
-            $article->body = $val->validated('body');
-			$article->created_time = time();
-            $article->published = $status;
+            $article = new Model_Article(array(
+                'category_id' => $val->validated('category_id'),
+                'title' => $val->validated('title'),
+                'body' => $val->validated('body'),
+                'created_time' => Date::time(),
+                'published' => $status,
+            ));
+
             $article->save();
             
             Session::set_flash('success', 'Article successfully added.');
             
-            Output::redirect('articles/add');
+            Response::redirect('articles/add');
         }
         
         $this->template->title = 'Add Article';
@@ -98,7 +101,7 @@ class Controller_Articles extends Controller_Common {
 
             Session::set_flash('success', 'Article successfully updated.');
 
-            Output::redirect('articles/edit/'.$article->id);
+            Response::redirect('articles/edit/'.$article->id);
         }
         
         $this->template->title = 'Edit Article - '.$article->title;
@@ -115,13 +118,13 @@ class Controller_Articles extends Controller_Common {
         $article->published = 1;
         $article->save();
 
-        Output::redirect('articles');
+        Response::redirect('articles');
     }
     
     public function action_delete($id)
     {
         Model_Article::find($id)->delete();
         
-        Output::redirect('articles');
+        Response::redirect('articles');
     }
 }
